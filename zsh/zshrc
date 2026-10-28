@@ -16,7 +16,7 @@ setopt auto_pushd pushd_ignore_dups interactive_comments no_beep
 # --- Plugins (antidote, bundled into a cached file) ---
 ANTIDOTE_HOME=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
 ZSH_AUTOSUGGEST_STRATEGY=(history completion)
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6c7086'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#928374'
 _antidote=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote/antidote.zsh
 _plugins=$ZSH_CACHE/plugins.zsh
 if [[ -r $_antidote && ! $_plugins -nt $DOTFILES/zsh/plugins.txt ]]; then

@@ -1,5 +1,5 @@
 # --- Theme and font ---
-theme = Catppuccin Mocha
+theme = Gruvbox Dark Hard
 font-family = JetBrainsMono Nerd Font
 font-size = 12
 

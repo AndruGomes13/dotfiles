@@ -21,7 +21,7 @@ EOF
   link bat/config "$HOME/.config/bat/config"
   link lazygit/config.yml "$HOME/.config/lazygit/config.yml"
   link atuin/config.toml "$HOME/.config/atuin/config.toml"
-  link btop/themes/catppuccin_mocha.theme "$HOME/.config/btop/themes/catppuccin_mocha.theme"
+  link btop/themes/gruvbox_dark_v2.theme "$HOME/.config/btop/themes/gruvbox_dark_v2.theme"
   seed btop/btop.conf "$HOME/.config/btop/btop.conf"
 
   # --- Ghostty (desktop only); older config files would override this one ---
@@ -40,11 +40,12 @@ EOF
 # ~/.gitconfig stays untracked for identity and machine-specific settings. It must
 # exist, or `git config --global` would write into the repo through the symlink.
 check_gitconfig() {
-  local key
+  local key mine
   [[ -f $HOME/.gitconfig ]] || touch "$HOME/.gitconfig"
   for key in $(git config -f "$DOTFILES/git/config" --name-only --list); do
-    if git config -f "$HOME/.gitconfig" --get "$key" >/dev/null 2>&1; then
-      warn "~/.gitconfig sets $key, which overrides the dotfiles value"
+    mine=$(git config -f "$HOME/.gitconfig" --get "$key" 2>/dev/null) || continue
+    if [[ $mine != "$(git config -f "$DOTFILES/git/config" --get "$key")" ]]; then
+      warn "~/.gitconfig sets $key = $mine, which overrides the dotfiles value"
     fi
   done
   if ! git config --global user.email >/dev/null; then

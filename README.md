@@ -1,6 +1,6 @@
 # dotfiles
 
-Terminal setup for macOS and Linux: zsh, Ghostty, tmux, Neovim (LazyVim), Starship and modern CLI tools, all in Catppuccin Mocha.
+Terminal setup for macOS and Linux: zsh, Ghostty, tmux, Neovim (LazyVim), Starship and modern CLI tools, all in Gruvbox Dark.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/AndruGomes13/dotfiles/HEAD/install.sh | bash

@@ -130,8 +130,8 @@ done
 tmux -L t kill-server 2>/dev/null
 
 section "neovim"
-expect_empty "starts with catppuccin mocha" \
-  "$(nvim --headless "+lua if vim.g.colors_name .. require('catppuccin').options.flavour ~= 'catppuccinmocha' then io.write('wrong theme') end" +qa 2>&1)"
+expect_empty "starts with gruvbox" \
+  "$(nvim --headless "+lua if vim.g.colors_name ~= 'gruvbox' then io.write('wrong theme: ' .. tostring(vim.g.colors_name)) end" +qa 2>&1)"
 check "plugins installed" test -d ~/.local/share/nvim/lazy/LazyVim
 check "local.lua is sourced" bash -c 'echo "vim.g.local_ok = 1" >~/.config/nvim/lua/local.lua && [[ $(nvim --headless "+lua io.write(tostring(vim.g.local_ok))" +qa 2>&1) == 1 ]]; r=$?; rm ~/.config/nvim/lua/local.lua; exit $r'
 if ! command -v cc >/dev/null; then
@@ -139,9 +139,9 @@ if ! command -v cc >/dev/null; then
 fi
 
 section "themes"
-check "bat theme" bash -c 'grep -q "Catppuccin Mocha" "$(bat --config-file)"'
-check "btop theme" grep -q catppuccin_mocha ~/.config/btop/btop.conf
-check "fzf colors" zsh -ic '[[ $FZF_DEFAULT_OPTS == *cba6f7* ]]'
+check "bat theme" bash -c 'grep -q "gruvbox-dark" "$(bat --config-file)"'
+check "btop theme" grep -q gruvbox_dark_v2 ~/.config/btop/btop.conf
+check "fzf colors" zsh -ic '[[ $FZF_DEFAULT_OPTS == *d65d0e* ]]'
 
 section "repair"
 rm ~/.config/starship.toml

@@ -1,5 +1,5 @@
--- --- Catppuccin Mocha ---
+-- --- Gruvbox Dark, hard contrast ---
 return {
-  { "catppuccin/nvim", name = "catppuccin", opts = { flavour = "mocha" } },
-  { "LazyVim/LazyVim", opts = { colorscheme = "catppuccin" } },
+  { "ellisonleao/gruvbox.nvim", priority = 1000, opts = { contrast = "hard" } },
+  { "LazyVim/LazyVim", opts = { colorscheme = "gruvbox" } },
 }

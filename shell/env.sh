@@ -36,13 +36,13 @@ case "${TERM:-}" in
   xterm-ghostty) infocmp xterm-ghostty >/dev/null 2>&1 || export TERM=xterm-256color ;;
 esac
 
-# --- fzf: fd for file search, Catppuccin colors ---
+# --- fzf: fd for file search, gruvbox colors ---
 if command -v fd >/dev/null 2>&1; then
   export FZF_DEFAULT_COMMAND="fd --type f --hidden --exclude .git"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
 fi
 export FZF_DEFAULT_OPTS="--height 40% --layout reverse --border \
---color=bg+:#313244,bg:-1,spinner:#f5e0dc,hl:#f38ba8,fg:#cdd6f4,header:#f38ba8,info:#cba6f7 \
---color=pointer:#f5e0dc,marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8 \
---color=selected-bg:#45475a,border:#6c7086,label:#cdd6f4"
+--color=bg+:#3c3836,bg:-1,fg:#ebdbb2,fg+:#fbf1c7,hl:#d79921,hl+:#fabd2f,info:#689d6a \
+--color=prompt:#d65d0e,pointer:#d65d0e,marker:#98971a,spinner:#689d6a,header:#928374 \
+--color=selected-bg:#504945,border:#665c54,label:#ebdbb2"

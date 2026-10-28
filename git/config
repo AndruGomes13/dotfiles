@@ -1,4 +1,4 @@
-# --- delta as pager, Catppuccin colors ---
+# --- delta as pager, gruvbox colors ---
 [core]
 	pager = delta
 [interactive]
@@ -6,16 +6,7 @@
 [delta]
 	navigate = true
 	line-numbers = true
-	syntax-theme = Catppuccin Mocha
-	minus-style = syntax "#53394c"
-	minus-emph-style = syntax "#694559"
-	plus-style = syntax "#394545"
-	plus-emph-style = syntax "#4e6356"
-	file-style = "#cdd6f4"
-	hunk-header-decoration-style = "#6c7086" box
-	line-numbers-minus-style = "#f38ba8"
-	line-numbers-plus-style = "#a6e3a1"
-	line-numbers-zero-style = "#6c7086"
+	syntax-theme = gruvbox-dark
 
 # --- Diff, merge and sync defaults ---
 [merge]

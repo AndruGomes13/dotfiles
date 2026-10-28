@@ -16,7 +16,7 @@ require("lazy").setup({
     { import = "plugins" },
   },
   defaults = { lazy = false, version = false },
-  install = { colorscheme = { "catppuccin", "habamax" } },
+  install = { colorscheme = { "gruvbox", "habamax" } },
   checker = { enabled = true, notify = false },
   performance = {
     rtp = {
