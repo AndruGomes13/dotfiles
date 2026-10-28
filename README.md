@@ -23,3 +23,11 @@ curl -fsSL https://raw.githubusercontent.com/AndruGomes13/dotfiles/HEAD/install.
 | `--no-sudo` | Never use sudo; zsh and tools go in your home folder |
 
 Without `--full` or `--minimal`, macOS and Linux desktops get `--full`, and SSH sessions and headless machines get `--minimal`.
+
+## Update
+
+```sh
+git -C ~/.local/share/dotfiles pull
+```
+
+Then open a new shell (or run `exec zsh`). If tools or apps were added, rerun the command under Install instead.
