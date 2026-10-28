@@ -16,9 +16,11 @@ install_tmux_plugins() {
   clone https://github.com/tmux-plugins/tpm "$tpm"
   [[ -x $tpm/bin/install_plugins ]] || return 0
   log "Installing tmux plugins"
-  # A private server, so a running tmux session is never touched.
+  # A private server, so a running tmux session is never touched. Retry once quietly,
+  # since a single failed download would otherwise leave a plugin missing.
   sock=$(mktemp -d)
-  env -u TMUX TMUX_TMPDIR="$sock" "$tpm/bin/install_plugins" >/dev/null || warn "could not install tmux plugins"
+  tpm_install() { env -u TMUX TMUX_TMPDIR="$sock" "$tpm/bin/install_plugins" >/dev/null; }
+  tpm_install 2>/dev/null || tpm_install || warn "could not install tmux plugins; rerun to retry"
   env -u TMUX TMUX_TMPDIR="$sock" tmux kill-server >/dev/null 2>&1 || true
   rm -rf "$sock"
 }
