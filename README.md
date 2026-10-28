@@ -62,7 +62,7 @@ In your home directory, `~/.zshrc` and `~/.bashrc` are two-line stubs that sourc
 
 | | |
 |---|---|
-| tmux prefix | `Ctrl-a` or `Ctrl-Space` |
+| tmux prefix | `Ctrl-b` |
 | splits | `prefix \|` / `prefix -` (open in the current directory) |
 | move between tmux panes and nvim splits | `Ctrl-h/j/k/l` |
 | resize pane | `prefix H/J/K/L` |

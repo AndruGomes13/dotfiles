@@ -15,7 +15,7 @@ macos-option-as-alt = true
 # --- SSH: install Ghostty's terminfo on remote hosts, else fall back to xterm-256color ---
 shell-integration-features = ssh-env,ssh-terminfo
 
-# --- Cmd+arrows send Home/End instead of ^A/^E, which would trigger the tmux prefix ---
+# --- Cmd+arrows send Home/End instead of ^A/^E, so they also work in Neovim ---
 keybind = super+arrow_left=text:\x1b[H
 keybind = super+arrow_right=text:\x1b[F
 keybind = super+shift+arrow_left=text:\x1b[1;2H

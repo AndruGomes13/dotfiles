@@ -94,6 +94,7 @@ check "Up searches history prefix" zsh -ic '[[ $(bindkey "^[[A") == *up-line-or-
 check "Ctrl+R is atuin" zsh -ic '[[ $(bindkey "^R") == *atuin-search ]]'
 check "case-insensitive completion" zsh -ic 'zstyle -L ":completion:*" matcher-list | grep -q "a-zA-Z"'
 check "starship prompt" zsh -ic '[[ $PROMPT == *starship* ]]'
+check "remote host shown only over SSH" bash -c 'h=$(hostname -s); SSH_CONNECTION="1 2 3 4" zsh -ic "starship prompt" 2>/dev/null | grep -q "$h" && ! zsh -ic "starship prompt" 2>/dev/null | grep -q "$h"'
 check "history is large and shared" zsh -ic '(( SAVEHIST >= 100000 )) && [[ -o share_history ]]'
 check "missing ghostty terminfo falls back" bash -c '[[ $(TERM=xterm-ghostty TERMINFO=/nonexistent zsh -ic "print \$TERM" 2>/dev/null) == xterm-256color ]]'
 check "zshrc.local is sourced" bash -c 'echo "export LOCAL_OK=1" >~/.zshrc.local && zsh -ic "[[ \$LOCAL_OK == 1 ]]"; r=$?; rm ~/.zshrc.local; exit $r'
@@ -117,9 +118,9 @@ check "TPM's blank GitHub login skips the credential helper" bash -c \
 section "tmux"
 tmux -L t -f ~/.tmux.conf new -d -s t 2>/dev/null
 sleep 2
-check "prefix C-a" test "$(tmux -L t show -gv prefix)" = C-a
-check "prefix2 C-Space" test "$(tmux -L t show -gv prefix2)" = C-Space
-check "status on top" test "$(tmux -L t show -gv status-position)" = top
+check "prefix C-b" test "$(tmux -L t show -gv prefix)" = C-b
+check "no second prefix" test "$(tmux -L t show -gv prefix2)" = None
+check "status at the bottom" test "$(tmux -L t show -gv status-position)" = bottom
 check "windows from 1" test "$(tmux -L t show -gv base-index)" = 1
 check "panes from 1" test "$(tmux -L t show -gv pane-base-index)" = 1
 check "escape-time 0" test "$(tmux -L t show -sv escape-time)" = 0

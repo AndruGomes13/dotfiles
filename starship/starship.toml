@@ -1,11 +1,11 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# --- Layout: powerline segments, prompt character on the next line ---
+# --- Layout: remote host (SSH only), powerline segments, prompt character on the next line ---
 format = """
+$hostname\
 [](color_orange)\
 $os\
 $username\
-$hostname\
 [](bg:color_yellow fg:color_orange)\
 $directory\
 [](fg:color_yellow bg:color_aqua)\
@@ -81,10 +81,11 @@ style_user = "bg:color_orange fg:color_fg0"
 style_root = "bg:color_orange fg:color_fg0"
 format = '[ $user ]($style)'
 
+# A separate red pill, so it never breaks the powerline arrows that follow
 [hostname]
 ssh_only = true
 ssh_symbol = "󰒋 "
-format = '[$ssh_symbol$hostname ](bg:color_orange fg:color_fg0)'
+format = "[](fg:color_red)[$ssh_symbol$hostname](bold bg:color_red fg:color_fg0)[](fg:color_red) "
 
 [directory]
 style = "fg:color_fg0 bg:color_yellow"
