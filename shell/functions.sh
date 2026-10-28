@@ -42,5 +42,10 @@ slurm-idle() {
 
 slurm-jobs() {
   command -v squeue >/dev/null || { echo "Slurm isn't available here (squeue not found)"; return 1; }
+  squeue --user "$USER"
+}
+
+slurm-watch-jobs() {
+  command -v squeue >/dev/null || { echo "Slurm isn't available here (squeue not found)"; return 1; }
   watch -n 1 squeue --user "$USER"
 }

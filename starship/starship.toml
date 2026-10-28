@@ -2,6 +2,7 @@
 
 # --- Layout: remote host (SSH only), powerline segments, prompt character on the next line ---
 format = """
+${env_var.HOST_ALIAS}\
 $hostname\
 [](color_orange)\
 $os\
@@ -81,11 +82,17 @@ style_user = "bg:color_orange fg:color_fg0"
 style_root = "bg:color_orange fg:color_fg0"
 format = '[ $user ]($style)'
 
-# A separate red pill, so it never breaks the powerline arrows that follow
+# A separate red pill, so it never breaks the powerline arrows that follow.
+# Shown over SSH, unless HOST_ALIAS is set: then that name replaces the hostname.
 [hostname]
-ssh_only = true
+ssh_only = false
+detect_env_vars = ["SSH_CONNECTION", "!HOST_ALIAS"]
 ssh_symbol = "󰒋 "
 format = "[](fg:color_red)[$ssh_symbol$hostname](bold bg:color_red fg:color_fg0)[](fg:color_red) "
+
+# Set in a machine's ~/.zshrc (export HOST_ALIAS="cluster-1") to show that name in the pill
+[env_var.HOST_ALIAS]
+format = "[](fg:color_red)[󰒋 $env_value](bold bg:color_red fg:color_fg0)[](fg:color_red) "
 
 [directory]
 style = "fg:color_fg0 bg:color_yellow"
