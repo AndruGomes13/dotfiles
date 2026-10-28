@@ -7,63 +7,40 @@ webm2mp4() {
   ffmpeg -i "$1" -c:v libx264 -preset slow -crf 22 -c:a aac -b:a 192k "${1%.webm}.mp4"
 }
 
-# --- Count and compare files, skipping macOS, iCloud, OneDrive and editor clutter ---
-_clean_find() {
-  find "$@" -type f \
-    ! -name '.DS_Store' ! -name '._*' ! -name '*.icloud' ! -name 'Icon?' \
-    ! -name '.tmp*' ! -name '~*' ! -name '.~lock.*' \
-    ! -path '*/.onedrive*' ! -path '*/.Trash*'
+# --- PDF: shrink embedded images with Ghostscript, output to ~/Downloads ---
+pdfcompress() {
+  if [[ "$1" == "-h" || "$1" == "--help" || -z "$1" ]]; then
+    echo "Usage: pdfcompress <file.pdf> [dpi]"
+    echo "  dpi: image resolution, higher = better quality/bigger (72 small, 150 default, 300 print)"
+    echo "  Writes ~/Downloads/<name>-<dpi>dpi.pdf; text and vector figures are unaffected"
+    return 0
+  fi
+  command -v gs >/dev/null || { echo "Requires ghostscript (brew install ghostscript / apt install ghostscript)"; return 1; }
+  local in="$1" dpi="${2:-150}"
+  [[ -f "$in" ]] || { echo "File not found: $in"; return 1; }
+  [[ "$dpi" =~ ^[0-9]+$ ]] || { echo "dpi must be a number (e.g. 150)"; return 1; }
+  mkdir -p "$HOME/Downloads"
+  local out="$HOME/Downloads/$(basename "${in%.[pP][dD][fF]}")-${dpi}dpi.pdf"
+  gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
+     -dDownsampleColorImages=true -dDownsampleGrayImages=true \
+     -dColorImageResolution="$dpi" -dGrayImageResolution="$dpi" \
+     -dColorImageDownsampleType=/Bicubic -dGrayImageDownsampleType=/Bicubic \
+     -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$out" "$in" \
+  && du -h "$in" "$out"
 }
 
-countfiles() {
-  local dir
-  for dir in "${@:-.}"; do
-    if [ ! -d "$dir" ]; then
-      echo "Error: '$dir' is not a directory"
-      continue
-    fi
-    echo "Directory: $dir"
-    echo "Total files:   $(find "$dir" -type f | wc -l | tr -d ' ')"
-    echo "Clean files:   $(_clean_find "$dir" | wc -l | tr -d ' ')  (excluding .DS_Store, .icloud, Icon, OneDrive temp)"
-    echo
-  done
+# --- Slurm clusters: idle nodes per partition, live view of your jobs ---
+slurm-idle() {
+  command -v sinfo >/dev/null || { echo "Slurm isn't available here (sinfo not found)"; return 1; }
+  printf "h100 idle: %d nodes\n" \
+    "$(sinfo -p hpc-mid -t idle -h -o '%D' | awk '{s+=$1} END {print s+0}')"
+  printf "rtx  idle: %d nodes\n" \
+    "$(sinfo -p rtx-mid -t idle -h -o '%D' | awk '{s+=$1} END {print s+0}')"
+  printf "cpu  idle: %d nodes\n" \
+    "$(sinfo -p cpu-mid -t idle -h -o '%D' | awk '{s+=$1} END {print s+0}')"
 }
 
-difffiles() {
-  local sizes=0 dir1 dir2 d only1 only2
-  if [ "$1" = "--sizes" ]; then
-    sizes=1
-    shift
-  fi
-  dir1=${1%/} dir2=${2%/}
-  if [ -z "$dir1" ] || [ -z "$dir2" ]; then
-    echo "Usage: difffiles [--sizes] /path/to/dir1 /path/to/dir2"
-    return 1
-  fi
-  for d in "$dir1" "$dir2"; do
-    [ -d "$d" ] || { echo "Error: '$d' is not a directory"; return 1; }
-  done
-
-  _difffiles_list() {
-    (
-      cd "$1" || exit
-      if [ "$sizes" = 0 ]; then
-        _clean_find .
-      elif stat --version >/dev/null 2>&1; then
-        _clean_find . -exec stat -c '%s %n' {} +
-      else
-        _clean_find . -exec stat -f '%z %N' {} +
-      fi
-    ) | sed 's|\./||' | LC_ALL=C sort
-  }
-  only1=$(LC_ALL=C comm -23 <(_difffiles_list "$dir1") <(_difffiles_list "$dir2"))
-  only2=$(LC_ALL=C comm -13 <(_difffiles_list "$dir1") <(_difffiles_list "$dir2"))
-
-  echo "=== Only in dir1 ($(printf '%s' "$only1" | grep -c .) files) ==="
-  echo "$dir1"
-  echo "${only1:-(none)}"
-  echo
-  echo "=== Only in dir2 ($(printf '%s' "$only2" | grep -c .) files) ==="
-  echo "$dir2"
-  echo "${only2:-(none)}"
+slurm-jobs() {
+  command -v squeue >/dev/null || { echo "Slurm isn't available here (squeue not found)"; return 1; }
+  watch -n 1 squeue --user "$USER"
 }
