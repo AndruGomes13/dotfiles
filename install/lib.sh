@@ -59,7 +59,7 @@ detect_sudo() {
   fi
 }
 
-# --- File helpers: backup, link, stub, seed, clone ---
+# --- File helpers: backup, link, rc_file, seed, clone ---
 
 # Move an existing path into $BACKUP_DIR, keeping its location relative to $HOME.
 backup() {
@@ -79,13 +79,25 @@ link() {
   info "linked $dst"
 }
 
-# stub <target> <<< content: write a small file that sources the repo.
-stub() {
-  local dst=$1 content
-  content=$(cat)
-  if [[ -f $dst && ! -L $dst && $(<"$dst") == "$content" ]]; then return 0; fi
+# rc_file <target> <line>: make <line>, which loads the repo, the first line of a shell rc
+# file. Lines the user or other tools add below it are left alone. A file without the
+# line is backed up and rewritten: if it loaded the dotfiles from an old path, its other
+# lines are kept; otherwise they are kept commented out, so an old setup can't clash.
+rc_file() {
+  local dst=$1 line=$2 tmp
+  if [[ -f $dst ]] && grep -qxF "$line" "$dst"; then return 0; fi
+  tmp=$(mktemp)
+  {
+    printf '%s\n%s\n' "$line" "# Machine-specific settings go below."
+    if [[ -f $dst ]] && grep -qE 'dotfiles/(zsh/zshrc|bash/bashrc)' "$dst"; then
+      grep -vE 'dotfiles/(zsh/zshrc|bash/bashrc)|^# (Managed by dotfiles|Machine-specific settings go below)' "$dst" || true
+    elif [[ -s $dst ]]; then
+      printf '\n# Your previous ~/%s, commented out. Uncomment the lines you still need.\n' "${dst#"$HOME"/}"
+      sed 's/^/# /' "$dst"
+    fi
+  } >"$tmp"
   if [[ -e $dst || -L $dst ]]; then backup "$dst"; fi
-  printf '%s\n' "$content" >"$dst"
+  mv "$tmp" "$dst"
   info "wrote $dst"
 }
 

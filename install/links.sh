@@ -2,15 +2,9 @@ link_configs() {
   local f
   log "Linking configs"
 
-  # --- Shell rc files: small stubs that source the repo ---
-  stub "$HOME/.zshrc" <<EOF
-# Managed by dotfiles. Machine-specific settings go in ~/.zshrc.local.
-[[ -r "$DOTFILES/zsh/zshrc" ]] && source "$DOTFILES/zsh/zshrc"
-EOF
-  stub "$HOME/.bashrc" <<EOF
-# Managed by dotfiles. Machine-specific settings go in ~/.bashrc.local.
-[ -r "$DOTFILES/bash/bashrc" ] && . "$DOTFILES/bash/bashrc"
-EOF
+  # --- Shell rc files: the first line loads the repo, machine-specific lines go below ---
+  rc_file "$HOME/.zshrc" "[[ -r \"$DOTFILES/zsh/zshrc\" ]] && source \"$DOTFILES/zsh/zshrc\""
+  rc_file "$HOME/.bashrc" "[ -r \"$DOTFILES/bash/bashrc\" ] && . \"$DOTFILES/bash/bashrc\""
 
   # --- App configs: symlinks into the repo ---
   link tmux/tmux.conf "$HOME/.tmux.conf"

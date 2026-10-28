@@ -65,6 +65,3 @@ command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow --disab
 # --- Aliases and functions ---
 source $DOTFILES/shell/aliases.sh
 source $DOTFILES/shell/functions.sh
-
-# --- Machine-specific settings ---
-[[ -r ~/.zshrc.local ]] && source ~/.zshrc.local

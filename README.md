@@ -40,13 +40,13 @@ Brewfile          macOS packages
 tests/            Docker test
 ```
 
-In your home directory, `~/.zshrc` and `~/.bashrc` are two-line stubs that source the repo. Everything else is a symlink into it, so edit here and `git pull` updates every machine.
+In your home directory, the first line of `~/.zshrc` and `~/.bashrc` loads the repo, and everything below it is yours. Everything else is a symlink into the repo, so edit here and `git pull` updates every machine.
 
 ## Machine-specific settings (untracked)
 
 | File | For |
 |---|---|
-| `~/.zshrc.local`, `~/.bashrc.local` | secrets, PATH additions, per-machine aliases |
+| `~/.zshrc`, `~/.bashrc` (below the first line) | secrets, PATH additions, per-machine aliases; tool installers like conda add their lines here too |
 | `~/.gitconfig` | `user.name`, `user.email`, overrides of [git/config](git/config) |
 | `~/.config/nvim/lua/local.lua` | Neovim options and keymaps |
 | `~/.config/ghostty/local.ghostty` | Ghostty overrides (e.g. `font-size`) |

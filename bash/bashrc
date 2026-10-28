@@ -39,6 +39,3 @@ command -v zoxide >/dev/null && eval "$(zoxide init bash --cmd cd)"
 # --- Aliases and functions ---
 . "$DOTFILES/shell/aliases.sh"
 . "$DOTFILES/shell/functions.sh"
-
-# --- Machine-specific settings ---
-[[ -r ~/.bashrc.local ]] && . ~/.bashrc.local

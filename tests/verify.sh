@@ -36,6 +36,7 @@ git -C "$DOTFILES_REPO" add -A
 git -C "$DOTFILES_REPO" -c user.name=test -c user.email=test@example.com commit -qm test
 dotfiles=$HOME/.local/share/dotfiles
 printf ': 1700000000:0;echo imported-once\n' >>~/.zsh_history
+echo 'export OLD_SETUP=1' >>~/.zshrc
 
 for run in 1 2; do
   section "install, run $run (curl | bash)"
@@ -52,6 +53,9 @@ check "one backup dir (from run 1)" test "$(ls ~/.dotfiles-backup | wc -l)" -eq 
 check "existing .bashrc backed up" bash -c 'ls ~/.dotfiles-backup/*/.bashrc'
 check ".zshrc sources the repo once" test "$(grep -c 'dotfiles/zsh/zshrc' ~/.zshrc)" -eq 1
 check ".bashrc sources the repo once" test "$(grep -c 'dotfiles/bash/bashrc' ~/.bashrc)" -eq 1
+check ".zshrc loads the repo on line 1" bash -c 'head -n 1 ~/.zshrc | grep -q dotfiles/zsh/zshrc'
+check "old .zshrc kept below, commented out" grep -qx '# export OLD_SETUP=1' ~/.zshrc
+check "old .zshrc lines don't run" zsh -ic '[[ -z $OLD_SETUP ]]'
 check "zsh history imported into atuin once" test "$(zsh -ic 'atuin history list --cmd-only' 2>/dev/null | grep -c '^echo imported-once$')" -eq 1
 
 section "platform"
@@ -100,7 +104,8 @@ check "starship prompt" zsh -ic '[[ $PROMPT == *starship* ]]'
 check "remote host shown only over SSH" bash -c 'h=$(hostname -s); SSH_CONNECTION="1 2 3 4" zsh -ic "starship prompt" 2>/dev/null | grep -q "$h" && ! zsh -ic "starship prompt" 2>/dev/null | grep -q "$h"'
 check "history is large and shared" zsh -ic '(( SAVEHIST >= 100000 )) && [[ -o share_history ]]'
 check "missing ghostty terminfo falls back" bash -c '[[ $(TERM=xterm-ghostty TERMINFO=/nonexistent zsh -ic "print \$TERM" 2>/dev/null) == xterm-256color ]]'
-check "zshrc.local is sourced" bash -c 'echo "export LOCAL_OK=1" >~/.zshrc.local && zsh -ic "[[ \$LOCAL_OK == 1 ]]"; r=$?; rm ~/.zshrc.local; exit $r'
+echo 'export LOCAL_OK=1' >>~/.zshrc
+check "lines added below line 1 run" zsh -ic '[[ $LOCAL_OK == 1 ]]'
 echo "  zsh startup: $(zsh -c 'zmodload zsh/datetime; s=$EPOCHREALTIME; zsh -ic "exit 0" </dev/null 2>/dev/null; printf %d $(( (EPOCHREALTIME - s) * 1000 ))')ms"
 
 section "bash"
@@ -153,14 +158,15 @@ check "atuin uses the repo config" bash -c "zsh -ic 'atuin info' 2>/dev/null | g
 section "repair"
 rm ~/.config/starship.toml
 ln -sfn /nonexistent ~/.tmux.conf
-echo 'echo junk' >>~/.zshrc
+sed "s|$dotfiles/zsh/zshrc|/old/place/dotfiles/zsh/zshrc|g" ~/.zshrc >"$logs/zshrc" && cat "$logs/zshrc" >~/.zshrc
 rm -rf ~/.local/share/zsh/plugins ~/.local/share/zsh/antidote ~/.tmux/plugins/tmux-resurrect ~/.local/share/mise/installs/fzf
 bash "$dotfiles/install.sh" >"$logs/run3.log" 2>&1
 check "run 3 exits 0" test $? -eq 0
 check "starship.toml relinked" test "$(readlink ~/.config/starship.toml)" = "$dotfiles/starship/starship.toml"
 check "broken .tmux.conf relinked" test "$(readlink ~/.tmux.conf)" = "$dotfiles/tmux/tmux.conf"
-check "edited .zshrc restored" bash -c '! grep -q junk ~/.zshrc'
-check "edited .zshrc backed up" bash -c 'grep -q junk ~/.dotfiles-backup/*/.zshrc'
+check "outdated .zshrc line repaired" bash -c "head -n 1 ~/.zshrc | grep -q '$dotfiles/zsh/zshrc' && ! grep -q /old/place ~/.zshrc"
+check "your .zshrc lines kept through repair" grep -qx 'export LOCAL_OK=1' ~/.zshrc
+check "broken .zshrc backed up" bash -c 'grep -q /old/place ~/.dotfiles-backup/*/.zshrc'
 check "zsh plugins restored" zsh -ic '(( $+widgets[shift-select::backward-word] ))'
 check "tmux plugin restored" test -d ~/.tmux/plugins/tmux-resurrect
 check "fzf reinstalled" zsh -ic 'command -v fzf'
