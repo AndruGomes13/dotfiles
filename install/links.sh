@@ -20,7 +20,6 @@ EOF
   link starship/starship.toml "$HOME/.config/starship.toml"
   link bat/config "$HOME/.config/bat/config"
   link lazygit/config.yml "$HOME/.config/lazygit/config.yml"
-  link atuin/config.toml "$HOME/.config/atuin/config.toml"
   link btop/themes/gruvbox_dark_v2.theme "$HOME/.config/btop/themes/gruvbox_dark_v2.theme"
   seed btop/btop.conf "$HOME/.config/btop/btop.conf"
 

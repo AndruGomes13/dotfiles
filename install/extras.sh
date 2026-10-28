@@ -29,9 +29,9 @@ install_nvim_plugins() {
   nvim --headless "+Lazy! install" +qa >/dev/null 2>&1 || warn "Neovim plugins failed to install; they retry on first launch"
 }
 
+# Import zsh history into atuin once, while atuin's history is still empty.
 import_history() {
-  local db=${XDG_DATA_HOME:-$HOME/.local/share}/atuin/history.db
-  if has atuin && [[ ! -f $db && -s $HOME/.zsh_history ]]; then
+  if has atuin && [[ -s $HOME/.zsh_history && -z $(atuin history list --cmd-only 2>/dev/null | head -n 1) ]]; then
     atuin import zsh >/dev/null 2>&1 || true
   fi
 }

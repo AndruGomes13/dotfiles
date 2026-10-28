@@ -35,6 +35,7 @@ git -C "$DOTFILES_REPO" init -q
 git -C "$DOTFILES_REPO" add -A
 git -C "$DOTFILES_REPO" -c user.name=test -c user.email=test@example.com commit -qm test
 dotfiles=$HOME/.local/share/dotfiles
+printf ': 1700000000:0;echo imported-once\n' >>~/.zsh_history
 
 for run in 1 2; do
   section "install, run $run (curl | bash)"
@@ -51,6 +52,7 @@ check "one backup dir (from run 1)" test "$(ls ~/.dotfiles-backup | wc -l)" -eq 
 check "existing .bashrc backed up" bash -c 'ls ~/.dotfiles-backup/*/.bashrc'
 check ".zshrc sources the repo once" test "$(grep -c 'dotfiles/zsh/zshrc' ~/.zshrc)" -eq 1
 check ".bashrc sources the repo once" test "$(grep -c 'dotfiles/bash/bashrc' ~/.bashrc)" -eq 1
+check "zsh history imported into atuin once" test "$(zsh -ic 'atuin history list --cmd-only' 2>/dev/null | grep -c '^echo imported-once$')" -eq 1
 
 section "platform"
 if [[ $os == Linux ]]; then
@@ -142,6 +144,7 @@ section "themes"
 check "bat theme" bash -c 'grep -q "gruvbox-dark" "$(bat --config-file)"'
 check "btop theme" grep -q gruvbox_dark_v2 ~/.config/btop/btop.conf
 check "fzf colors" zsh -ic '[[ $FZF_DEFAULT_OPTS == *d65d0e* ]]'
+check "atuin uses the repo config" bash -c "zsh -ic 'atuin info' 2>/dev/null | grep -q '$dotfiles/atuin/config.toml'"
 
 section "repair"
 rm ~/.config/starship.toml

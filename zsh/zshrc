@@ -41,6 +41,10 @@ zstyle ':completion:*' cache-path $ZSH_CACHE/completion
 # --- Key bindings ---
 source $DOTFILES/zsh/keybindings.zsh
 
+# --- Turn off mouse tracking left on by a killed tmux or dropped SSH session ---
+_reset_mouse() { print -n '\e[?1000l\e[?1002l\e[?1003l\e[?1006l' }
+autoload -Uz add-zsh-hook && add-zsh-hook precmd _reset_mouse
+
 # --- Tools ---
 [[ -t 0 ]] && command -v fzf >/dev/null && source <(fzf --zsh 2>/dev/null)
 command -v zoxide >/dev/null && eval "$(zoxide init zsh --cmd cd)"

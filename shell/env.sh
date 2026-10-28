@@ -31,6 +31,9 @@ export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 if command -v nvim >/dev/null 2>&1; then export EDITOR=nvim; else export EDITOR=vi; fi
 export VISUAL="$EDITOR" SUDO_EDITOR="$EDITOR"
 
+# --- atuin reads its config straight from the repo (its default location changes between versions) ---
+export ATUIN_CONFIG_DIR="$DOTFILES/atuin"
+
 # --- Remote hosts usually lack Ghostty's terminfo ---
 case "${TERM:-}" in
   xterm-ghostty) infocmp xterm-ghostty >/dev/null 2>&1 || export TERM=xterm-256color ;;
