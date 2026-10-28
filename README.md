@@ -27,7 +27,14 @@ Without `--full` or `--minimal`, macOS and Linux desktops get `--full`, and SSH 
 ## Update
 
 ```sh
-git -C ~/.local/share/dotfiles pull
+dotfiles-update      # pull the latest changes and reload the shell
+dotfiles-reinstall   # rerun the installer for new tools, links or apps (asks first)
 ```
 
-Then open a new shell (or run `exec zsh`). If tools or apps were added, rerun the command under Install instead.
+`dotfiles-reinstall` takes the same options as the install command.
+
+Without these functions (e.g. on a machine set up before they existed), pull manually, then open a new shell or run `exec zsh`:
+
+```sh
+git -C ~/.local/share/dotfiles pull
+```

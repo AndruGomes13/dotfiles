@@ -1,3 +1,22 @@
+# --- Update the dotfiles: pull the latest changes, then reload zsh ---
+dotfiles-update() {
+  git -C "$DOTFILES" pull --rebase --autostash || return
+  if [ -n "${ZSH_VERSION:-}" ]; then exec zsh; fi
+}
+
+# --- Rerun the installer, for changes a pull can't apply (new tools, links, apps); asks first ---
+dotfiles-reinstall() {
+  local reply
+  printf 'Rerun the dotfiles installer? Replaced files are backed up. [y/N] '
+  read -r reply
+  case "$reply" in
+    [yY] | [yY][eE][sS]) ;;
+    *) echo "Cancelled." && return 1 ;;
+  esac
+  "$DOTFILES/install.sh" "$@" || return
+  if [ -n "${ZSH_VERSION:-}" ]; then exec zsh; fi
+}
+
 # --- Archives ---
 compress() { tar -czf "${1%/}.tar.gz" "${1%/}"; }
 alias decompress='tar -xzf'
@@ -7,26 +26,34 @@ webm2mp4() {
   ffmpeg -i "$1" -c:v libx264 -preset slow -crf 22 -c:a aac -b:a 192k "${1%.webm}.mp4"
 }
 
-# --- PDF: shrink embedded images with Ghostscript, output to ~/Downloads ---
+# --- PDF: shrink embedded images with Ghostscript into <name>-compressed.pdf next to it ---
 pdfcompress() {
   if [[ "$1" == "-h" || "$1" == "--help" || -z "$1" ]]; then
     echo "Usage: pdfcompress <file.pdf> [dpi]"
     echo "  dpi: image resolution, higher = better quality/bigger (72 small, 150 default, 300 print)"
-    echo "  Writes ~/Downloads/<name>-<dpi>dpi.pdf; text and vector figures are unaffected"
+    echo "  Writes <name>-compressed.pdf next to the original; text and vector figures are unaffected"
     return 0
   fi
   command -v gs >/dev/null || { echo "Requires ghostscript (brew install ghostscript / apt install ghostscript)"; return 1; }
   local in="$1" dpi="${2:-150}"
   [[ -f "$in" ]] || { echo "File not found: $in"; return 1; }
   [[ "$dpi" =~ ^[0-9]+$ ]] || { echo "dpi must be a number (e.g. 150)"; return 1; }
-  mkdir -p "$HOME/Downloads"
-  local out="$HOME/Downloads/$(basename "${in%.[pP][dD][fF]}")-${dpi}dpi.pdf"
+  local out="${in%.[pP][dD][fF]}-compressed.pdf"
   gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/printer \
      -dDownsampleColorImages=true -dDownsampleGrayImages=true \
      -dColorImageResolution="$dpi" -dGrayImageResolution="$dpi" \
      -dColorImageDownsampleType=/Bicubic -dGrayImageDownsampleType=/Bicubic \
      -dNOPAUSE -dQUIET -dBATCH -sOutputFile="$out" "$in" \
   && du -h "$in" "$out"
+}
+
+# --- Copy a file or stdin to the local clipboard, also over SSH (OSC 52) ---
+osc-copy() {
+  if [ -n "$TMUX" ]; then
+    tmux load-buffer -w "${1:--}"
+  else
+    printf '\033]52;c;%s\a' "$(base64 < "${1:-/dev/stdin}" | tr -d '\n')"
+  fi
 }
 
 # --- Slurm clusters: idle nodes per partition, live view of your jobs ---
