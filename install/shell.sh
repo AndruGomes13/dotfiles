@@ -1,6 +1,11 @@
 # --- zsh (to ~/.local when there's no sudo), antidote, and the login shell ---
 setup_shell() {
   local script
+  # A system zsh (e.g. from apt on a later run with sudo) replaces the self-contained one
+  if [[ $OS == linux && -e $HOME/.local/bin/zsh ]] && { [[ -x /usr/bin/zsh ]] || [[ -x /bin/zsh ]]; }; then
+    backup "$HOME/.local/bin/zsh"
+    hash -r
+  fi
   if ! has zsh && [[ $OS == linux ]]; then
     log "Installing zsh to ~/.local"
     if script=$(curl -fsSL https://raw.githubusercontent.com/romkatv/zsh-bin/master/install) &&
