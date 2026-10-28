@@ -1,0 +1,53 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+# --- Layout: info line, then the prompt character ---
+palette = "catppuccin_mocha"
+format = """
+$hostname$directory$git_branch$git_state$git_status$python$conda$cmd_duration
+$character"""
+
+# --- Catppuccin Mocha colors ---
+[palettes.catppuccin_mocha]
+mauve = "#cba6f7"
+red = "#f38ba8"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+blue = "#89b4fa"
+overlay0 = "#6c7086"
+
+# --- Modules (hostname only over SSH) ---
+[hostname]
+ssh_symbol = "󰒋 "
+format = "[$ssh_symbol$hostname]($style) "
+style = "green"
+
+[directory]
+style = "bold blue"
+truncation_length = 4
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+format = "[$symbol$branch]($style) "
+style = "mauve"
+
+[git_status]
+style = "peach"
+
+[python]
+format = '[(\($virtualenv\) )]($style)'
+style = "yellow"
+
+[conda]
+format = "[($environment) ]($style)"
+style = "yellow"
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "overlay0"
+
+[character]
+success_symbol = "[❯](mauve)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"

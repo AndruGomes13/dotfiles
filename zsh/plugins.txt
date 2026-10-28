@@ -1,0 +1,4 @@
+zsh-users/zsh-completions path:src kind:fpath
+zsh-users/zsh-autosuggestions
+jirutka/zsh-shift-select
+zsh-users/zsh-syntax-highlighting kind:defer

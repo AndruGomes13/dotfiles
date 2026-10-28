@@ -1,0 +1,55 @@
+# --- Environment ---
+export DOTFILES=${${(%):-%x}:A:h:h}
+typeset -U path fpath
+source $DOTFILES/shell/env.sh
+command -v mise >/dev/null && eval "$(mise activate zsh)"
+ZSH_CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
+[[ -d $ZSH_CACHE ]] || mkdir -p $ZSH_CACHE
+
+# --- History and options ---
+HISTFILE=~/.zsh_history
+HISTSIZE=100000
+SAVEHIST=100000
+setopt extended_history share_history hist_ignore_all_dups hist_ignore_space hist_reduce_blanks hist_verify
+setopt auto_pushd pushd_ignore_dups interactive_comments no_beep
+
+# --- Plugins (antidote, bundled into a cached file) ---
+ANTIDOTE_HOME=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#6c7086'
+_antidote=${XDG_DATA_HOME:-$HOME/.local/share}/zsh/antidote/antidote.zsh
+_plugins=$ZSH_CACHE/plugins.zsh
+if [[ -r $_antidote && ! $_plugins -nt $DOTFILES/zsh/plugins.txt ]]; then
+  (source $_antidote && antidote bundle <$DOTFILES/zsh/plugins.txt >|$_plugins.tmp && mv -f $_plugins.tmp $_plugins)
+fi
+[[ -r $_plugins ]] && source $_plugins
+unset _antidote _plugins
+
+# --- Completion (case-insensitive menu, dump re-checked daily) ---
+[[ -n $HOMEBREW_PREFIX ]] && fpath+=($HOMEBREW_PREFIX/share/zsh/site-functions)
+command -v dircolors >/dev/null && eval "$(dircolors -b)"
+autoload -Uz compinit
+_dump=($ZSH_CACHE/zcompdump(N.mh-24))
+if (( $#_dump )); then compinit -C -d $ZSH_CACHE/zcompdump; else compinit -i -d $ZSH_CACHE/zcompdump && touch $ZSH_CACHE/zcompdump; fi
+unset _dump
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path $ZSH_CACHE/completion
+
+# --- Key bindings ---
+source $DOTFILES/zsh/keybindings.zsh
+
+# --- Tools ---
+[[ -t 0 ]] && command -v fzf >/dev/null && source <(fzf --zsh 2>/dev/null)
+command -v zoxide >/dev/null && eval "$(zoxide init zsh --cmd cd)"
+command -v atuin >/dev/null && eval "$(atuin init zsh --disable-up-arrow --disable-ai)"
+[[ $TERM != dumb ]] && command -v starship >/dev/null && eval "$(starship init zsh)"
+
+# --- Aliases and functions ---
+source $DOTFILES/shell/aliases.sh
+source $DOTFILES/shell/functions.sh
+
+# --- Machine-specific settings ---
+[[ -r ~/.zshrc.local ]] && source ~/.zshrc.local

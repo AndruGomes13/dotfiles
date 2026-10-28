@@ -1,0 +1,44 @@
+# --- delta as pager, Catppuccin colors ---
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	syntax-theme = Catppuccin Mocha
+	minus-style = syntax "#53394c"
+	minus-emph-style = syntax "#694559"
+	plus-style = syntax "#394545"
+	plus-emph-style = syntax "#4e6356"
+	file-style = "#cdd6f4"
+	hunk-header-decoration-style = "#6c7086" box
+	line-numbers-minus-style = "#f38ba8"
+	line-numbers-plus-style = "#a6e3a1"
+	line-numbers-zero-style = "#6c7086"
+
+# --- Diff, merge and sync defaults ---
+[merge]
+	conflictStyle = zdiff3
+[diff]
+	algorithm = histogram
+	colorMoved = default
+[init]
+	defaultBranch = master
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+
+# --- tmux's plugin manager clones as https://git::@github.com; keep that blank login out of the keychain ---
+[credential "https://git@github.com"]
+	helper =
+
+# --- Aliases ---
+[alias]
+	co = checkout
+	br = branch
+	ci = commit
+	st = status

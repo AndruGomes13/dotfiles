@@ -1,0 +1,28 @@
+# --- Theme and font ---
+theme = Catppuccin Mocha
+font-family = JetBrainsMono Nerd Font
+font-size = 12
+
+# --- Window ---
+window-padding-x = 12
+window-padding-y = 12
+window-padding-balance = true
+mouse-hide-while-typing = true
+
+# --- macOS: Option acts as Alt ---
+macos-option-as-alt = true
+
+# --- SSH: install Ghostty's terminfo on remote hosts, else fall back to xterm-256color ---
+shell-integration-features = ssh-env,ssh-terminfo
+
+# --- Cmd+arrows send Home/End instead of ^A/^E, which would trigger the tmux prefix ---
+keybind = super+arrow_left=text:\x1b[H
+keybind = super+arrow_right=text:\x1b[F
+keybind = super+shift+arrow_left=text:\x1b[1;2H
+keybind = super+shift+arrow_right=text:\x1b[1;2F
+
+# --- Ctrl+Backspace sends ^W (delete word), since ^H is taken by vim-tmux-navigator ---
+keybind = ctrl+backspace=text:\x17
+
+# --- Machine-specific overrides ---
+config-file = ?local.ghostty

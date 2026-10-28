@@ -1,0 +1,44 @@
+# --- Environment (all shells) ---
+export DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+. "$DOTFILES/shell/env.sh"
+
+[[ $- == *i* ]] || return
+
+# --- Switch to zsh when chsh wasn't possible ---
+if [[ -z ${DOTFILES_NO_ZSH:-} && ${SHLVL:-1} -le 1 ]] && command -v zsh >/dev/null; then
+  SHELL=$(command -v zsh)
+  export SHELL
+  exec zsh -l
+fi
+
+# --- History ---
+HISTSIZE=100000
+HISTFILESIZE=100000
+HISTCONTROL=ignoreboth
+shopt -s histappend checkwinsize
+
+# --- Completion and key bindings ---
+[[ -r /usr/share/bash-completion/bash_completion ]] && . /usr/share/bash-completion/bash_completion
+{
+  bind 'set completion-ignore-case on'
+  bind 'set show-all-if-ambiguous on'
+  bind 'set mark-symlinked-directories on'
+  bind '"\e[A": history-search-backward'
+  bind '"\e[B": history-search-forward'
+  bind '"\e[1;5C": forward-word'
+  bind '"\e[1;5D": backward-word'
+} 2>/dev/null
+
+# --- Tools ---
+command -v mise >/dev/null && eval "$(mise activate bash)"
+command -v dircolors >/dev/null && eval "$(dircolors -b)"
+command -v fzf >/dev/null && eval "$(fzf --bash 2>/dev/null)"
+command -v zoxide >/dev/null && eval "$(zoxide init bash --cmd cd)"
+[[ $TERM != dumb ]] && command -v starship >/dev/null && eval "$(starship init bash)"
+
+# --- Aliases and functions ---
+. "$DOTFILES/shell/aliases.sh"
+. "$DOTFILES/shell/functions.sh"
+
+# --- Machine-specific settings ---
+[[ -r ~/.bashrc.local ]] && . ~/.bashrc.local

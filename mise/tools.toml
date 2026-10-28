@@ -1,0 +1,20 @@
+# --- CLI tools, installed to ~/.local/share/mise (btop on macOS comes from the Brewfile) ---
+[tools]
+atuin = "latest"
+bat = "latest"
+btop = { version = "latest", os = ["linux"] }
+delta = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+gh = "latest"
+jq = "latest"
+lazydocker = "latest"
+lazygit = "latest"
+neovim = "latest"
+ripgrep = "latest"
+starship = "latest"
+tealdeer = "latest"
+tmux = "latest"
+tree-sitter = "latest"
+zoxide = "latest"

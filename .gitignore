@@ -1,0 +1,4 @@
+nvim/lazy-lock.json
+nvim/lazyvim.json
+nvim/lua/local.lua
+Brewfile.lock.json
