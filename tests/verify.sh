@@ -85,7 +85,7 @@ cp ~/.zshrc "$bare/"
 expect_empty "starts cleanly without tools or plugins" \
   "$(env -i HOME="$bare" TERM=xterm PATH=/usr/bin:/bin "$(command -v zsh)" -ic 'exit 0' 2>&1 </dev/null)"
 for t in mise fzf eza zoxide rg fd bat delta lazygit btop atuin jq tmux nvim starship gh tldr tree-sitter; do
-  check "tool: $t" zsh -ic "command -v $t"
+  check "tool: $t runs" zsh -ic "$t --version || $t -V"
 done
 check "ls is eza" zsh -ic 'alias ls | grep -q eza'
 check "cat is bat" zsh -ic 'alias cat | grep -q bat'

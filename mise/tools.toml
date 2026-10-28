@@ -1,6 +1,8 @@
 # --- CLI tools, installed to ~/.local/share/mise (btop on macOS comes from the Brewfile) ---
 [tools]
-atuin = "latest"
+atuin = { version = "latest", os = ["macos"] }
+# The musl build has no glibc dependency, so it also runs on older Linux (e.g. Ubuntu 22.04)
+"github:atuinsh/atuin" = { version = "latest", os = ["linux"], matching = "musl" }
 bat = "latest"
 btop = { version = "latest", os = ["linux"] }
 delta = "latest"
