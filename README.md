@@ -78,6 +78,9 @@ In your home directory, `~/.zshrc` and `~/.bashrc` are two-line stubs that sourc
 ```sh
 tests/linux.sh                          # fresh Ubuntu container, non-root, no sudo
 PLATFORM=linux/amd64 tests/linux.sh     # same on x86_64
+tests/macos.sh                          # this Mac, installing into a throwaway home folder
 ```
 
-The test installs twice, checks that the second run changes nothing, then breaks things and checks that a rerun repairs them.
+These install twice, check that the second run changes nothing, then break things and check that a rerun repairs them.
+
+To try the setup over SSH, `tests/ssh.sh` starts a container with the dotfiles installed. Connect with `ssh -p 2222 dev@localhost` and remove it with `docker rm -f dotfiles-ssh`.

@@ -58,6 +58,9 @@ section "platform"
 if [[ $os == Linux ]]; then
   check "no sudo in the container" bash -c '! command -v sudo'
   check "zsh installed to ~/.local without sudo" test -x ~/.local/bin/zsh
+  # Like Ghostty's SSH integration: a terminfo the system can read but the no-sudo zsh can't
+  infocmp -x xterm-256color | sed 's/^xterm-256color|/xterm-ghostty|/' | tic -x -o ~/.terminfo - 2>/dev/null
+  check "zsh falls back when it can't use xterm-ghostty" bash -c '[[ $(TERM=xterm-ghostty zsh -ic "print \$TERM" 2>/dev/null) == xterm-256color ]]'
 else
   check "GNU sed/grep/ls come first" zsh -ic 'sed --version && grep --version && command ls --version'
   check "btop from Homebrew" zsh -ic 'command -v btop'

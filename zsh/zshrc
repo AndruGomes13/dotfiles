@@ -3,6 +3,9 @@ export DOTFILES=${${(%):-%x}:A:h:h}
 typeset -U path fpath
 source $DOTFILES/shell/env.sh
 command -v mise >/dev/null && eval "$(mise activate zsh)"
+# Line editing breaks if this zsh can't use $TERM (e.g. the no-sudo zsh build with xterm-ghostty)
+zmodload zsh/terminfo
+[[ $TERM != dumb ]] && (( ! ${+terminfo[cup]} )) && export TERM=xterm-256color
 ZSH_CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/zsh
 [[ -d $ZSH_CACHE ]] || mkdir -p $ZSH_CACHE
 
