@@ -131,6 +131,8 @@ check "status at the bottom" test "$(tmux -L t show -gv status-position)" = bott
 check "windows from 1" test "$(tmux -L t show -gv base-index)" = 1
 check "panes from 1" test "$(tmux -L t show -gv pane-base-index)" = 1
 check "escape-time 0" test "$(tmux -L t show -sv escape-time)" = 0
+check "extended keys on" test "$(tmux -L t show -sv extended-keys)" = on
+check "passthrough on" test "$(tmux -L t show -gv allow-passthrough)" = on
 check "navigator C-h bound" bash -c 'tmux -L t list-keys -T root | grep -E "root +C-h .*select-pane -L"'
 check "| splits in current dir" bash -c 'tmux -L t list-keys -T prefix | grep -E "prefix +\| .*pane_current_path"'
 check "continuum hooked into status" bash -c 'tmux -L t show -gv status-right | grep -q continuum_save'
