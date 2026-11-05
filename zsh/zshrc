@@ -44,9 +44,10 @@ zstyle ':completion:*' cache-path $ZSH_CACHE/completion
 # --- Key bindings ---
 source $DOTFILES/zsh/keybindings.zsh
 
-# --- Turn off mouse tracking left on by a killed tmux or dropped SSH session ---
-_reset_mouse() { print -n '\e[?1000l\e[?1002l\e[?1003l\e[?1006l' }
-autoload -Uz add-zsh-hook && add-zsh-hook precmd _reset_mouse
+# --- Turn off mouse tracking and modified-key encoding (modifyOtherKeys, which turns Ctrl-C into
+#     ;5;99~) left on by a killed program or dropped SSH session; apps that want them re-enable on start ---
+_reset_terminal_modes() { print -n '\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[>4m' }
+autoload -Uz add-zsh-hook && add-zsh-hook precmd _reset_terminal_modes
 
 # --- In tmux, follow how the session is attached now, so the prompt's SSH indicator stays right ---
 _sync_ssh_connection() {
